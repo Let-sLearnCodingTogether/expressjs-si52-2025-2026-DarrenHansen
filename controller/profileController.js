@@ -5,5 +5,5 @@ export const publicProfile = (req, res) => {
         username: username,
         bio: "Bio dari controller"
     }
-    res.render('public-profiles', dataForView);
+    res.render('public-profile', dataForView);
 }
