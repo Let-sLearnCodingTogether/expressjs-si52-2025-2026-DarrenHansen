@@ -1,12 +1,11 @@
 import jwt from "jsonwebtoken"
 
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
+
 export const jwtSignUtil = (user) => {
     const payload = {
-        username : user.username,
-        email : user.email
+        username: user.username,
+        email: user.email
     }
-    const expiresIn = {
-        expiresIn : '1h'
-    }
-    return jwt.sign(payload, "JWT_SECRET_KEY", expiresIn)
+    return jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' })
 }

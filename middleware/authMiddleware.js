@@ -10,9 +10,11 @@ export const protect = (req, res, next) => {
         if(err || !user) {
             return res.status(401).json({
                 message: info ? info.message : "Unauthorized",
-                err: err.message || "Tidak valid",
+                err: err || "Tidak valid",
             });
         }
+        req.user = user
+        return next();
     }
-   );
+   )(req, res, next);
 };

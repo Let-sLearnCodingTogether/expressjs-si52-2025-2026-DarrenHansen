@@ -8,6 +8,18 @@ export const register = async (req, res) => {
         const request = req.body
         console.log(request);
 
+        // check existing username or email
+        const existing = await UserModel.findOne({
+            $or: [{ username: request.username }, { email: request.email }]
+        });
+
+        if (existing) {
+            return res.status(409).json({
+                message: 'Username atau email sudah terdaftar',
+                data: null
+            });
+        }
+
         const hashPassword = hash(request.password);
 
         await UserModel.create({
@@ -21,6 +33,13 @@ export const register = async (req, res) => {
             data: null
         })
     } catch(e) {
+        // handle duplicate key (11000) - return 409 Conflict
+        if (e.code === 11000) {
+            return res.status(409).json({
+                message: 'Duplicate key error',
+                data: null
+            });
+        }
         res.status(500).json({
             message: e.message,
             data: null
@@ -30,43 +49,40 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
-        const request = req.body;
-        const user = await UserModel.findOne({email: request.email});
+        const { email, password } = req.body;
+        const user = await UserModel.findOne({ email });
 
-        if(!user) {
+        if (!user) {
             return res.status(404).json({
                 message: "Email atau password salah",
                 data: null
             });
         }
-    
-        const isPasswordMatch = compare(request.password, user.password);
 
-        if(!isPasswordMatch) {
+        const isPasswordMatch = compare(password, user.password);
+
+        if (!isPasswordMatch) {
             return res.status(404).json({
                 message: "Email atau password salah",
                 data: null
             });
         }
-    
-        if(compare(loginData.password, user.password)) {
-            return res.status(200).json({
-                message: "Login Berhasil",
-                data: {
-                    username: user.username,
-                    email: user.email,
-                    token: jwtSignUtil(user)
-                },
-            })
-    }
-    res.status(401).json ({
-        message : "Login gagal",
-        data : null
-    })
 
-} catch (error) {
+        // generate token
+        const token = jwtSignUtil(user);
+
+        return res.status(200).json({
+            message: "Login Berhasil",
+            data: {
+                username: user.username,
+                email: user.email,
+                token
+            }
+        });
+
+    } catch (error) {
         res.status(500).json({
-            meassage: error.message,
+            message: error.message,
             data: null
         })
     }
