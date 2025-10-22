@@ -1,0 +1,7 @@
+{
+  // Workspace recommended extensions — VS Code will prompt to install these
+  "recommendations": [
+    "GitHub.copilot",
+    "GitHub.copilot-labs"
+  ]
+}

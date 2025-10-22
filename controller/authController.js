@@ -1,8 +1,10 @@
 import UserModel from "../models/userModel.js";
 import { hash, compare } from "../utils/hashUtil.js";
+import { jwtSignUtil } from "../utils/jwtSignUtil.js";
 
 export const register = async (req, res) => {
     try {
+
         const request = req.body
         console.log(request);
 
@@ -20,7 +22,7 @@ export const register = async (req, res) => {
         })
     } catch(e) {
         res.status(500).json({
-            meassage: error.message,
+            message: e.message,
             data: null
         })
     }
@@ -46,16 +48,23 @@ export const login = async (req, res) => {
                 data: null
             });
         }
-        
-        return res.status(200).json({
-            message: "Login Berhasil",
-            data: {
-                username: user.username,
-                email: user.email,
-                token: "TOKEN_PLACEHOLDER"
-            },
-        })
-    } catch (error) {
+    
+        if(compare(loginData.password, user.password)) {
+            return res.status(200).json({
+                message: "Login Berhasil",
+                data: {
+                    username: user.username,
+                    email: user.email,
+                    token: jwtSignUtil(user)
+                },
+            })
+    }
+    res.status(401).json ({
+        message : "Login gagal",
+        data : null
+    })
+
+} catch (error) {
         res.status(500).json({
             meassage: error.message,
             data: null

@@ -1,0 +1,16 @@
+{
+    // Editor suggestions and tab completion to accept inline suggestions with Tab
+    "editor.inlineSuggest.enabled": true,
+    "editor.tabCompletion": "on",
+    "editor.suggestSelection": "first",
+    "editor.suggest.showWords": true,
+
+    // Copilot inline suggestions (no-op if Copilot not installed)
+    "github.copilot.enable": {
+        "*": true
+    },
+    "github.copilot.inlineSuggest.enable": true,
+
+    // Optional: accept suggestion on Enter as well (user preference)
+    "editor.acceptSuggestionOnEnter": "on"
+}
